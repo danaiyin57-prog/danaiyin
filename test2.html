@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Skill Class - Kesraram</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;700&display=swap');
+
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #00c6ff;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --bg-color: #f4f7f9;
+        }
+
+        body {
+            font-family: 'Kantumruy Pro', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0062E6, #33AEFF);
+            color: white;
+            width: 100%;
+            padding: 25px 0;
+            text-align: center;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .logo-placeholder {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+        }
+
+        #quiz-container {
+            width: 92%;
+            max-width: 450px;
+            background: white;
+            margin: -20px 0 30px;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            box-sizing: border-box;
+        }
+
+        .q-progress { color: var(--primary-color); font-weight: bold; margin-bottom: 5px; display: block; }
+        h2 { color: #2c3e50; font-size: 1.1rem; line-height: 1.6; margin: 10px 0; }
+
+        .btn-speak-main {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        /* រចនាប័ទ្មជួរចម្លើយ */
+        .option-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .btn-speak-mini {
+            background: #eef2f7;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .option-item {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border: 2px solid #edf2f7;
+            border-radius: 12px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.95rem;
+            background: #fff;
+            display: flex;
+            align-items: center;
+        }
+
+        .option-prefix { font-weight: bold; color: var(--primary-color); margin-right: 8px; }
+        .option-item.selected { border-color: var(--primary-color); background-color: #ebf8ff; font-weight: bold; }
+
+        .nav-buttons { display: flex; justify-content: space-between; gap: 8px; margin-top: 20px; }
+        .btn-nav { flex: 1; padding: 12px 5px; border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; }
+        .btn-prev { background-color: #a0aec0; }
+        .btn-next { background-color: var(--primary-color); }
+        .btn-finish { background-color: var(--danger-color); }
+
+        .hidden { display: none; }
+        #result-screen { text-align: center; padding: 20px; }
+        .score-circle { width: 80px; height: 80px; border: 4px solid var(--primary-color); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 15px; font-size: 1.5rem; color: var(--primary-color); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo-placeholder">🏫</div>
+    <h1>សូមត្រៀមខ្លួនធ្វើសំណួរតេស្ដសមត្ថភាព</h1>
+    <h1>សូមស្វាគមន៍មកកាន់ថ្នាក់រៀនជំនាញឌីជីថល</h1>
+    <p>ថ្នាក់រៀនជំនាញឌីជីថលកេសរារាម ក្រុងសៀមរាប</p>
+</div>
+
+<div id="quiz-container">
+    <div id="quiz-content">
+        <span class="q-progress" id="q-number">សំណួរទី ១/១០</span>
+        <h2 id="q-text">តើអ្វីទៅជាអក្ខរកម្មឌីជីថល?</h2>
+        <button class="btn-speak-main" onclick="speakText(document.getElementById('q-text').innerText)">🔊 ស្ដាប់សំណួរ</button>
+
+        <div id="options-list">
+            </div>
+
+        <div class="nav-buttons">
+            <button class="btn-nav btn-prev" onclick="goPrev()">ថយក្រោយ</button>
+            <button class="btn-nav btn-next" onclick="goNext()">បន្ទាប់</button>
+            <button class="btn-nav btn-finish" onclick="finishQuiz()">បញ្ចប់ & ពិន្ទុ</button>
+        </div>
+    </div>
+
+    <div id="result-screen" class="hidden">
+        <h2>លទ្ធផលរបស់អ្នក</h2>
+        <div class="score-circle" id="final-score">0</div>
+        <p id="score-text" style="font-weight:bold;"></p>
+        <button class="btn-nav btn-next" style="width: 100%;" onclick="location.reload()">សាកល្បងម្ដងទៀត</button>
+    </div>
+</div>
+
+<script>
+    const prefixes = ["ក.", "ខ.", "គ.", "ឃ."];
+    const questions = [
+        { q: "តើនៅក្នុងភូមិមានអ្នកក្រដែលឬទេ?", a: ["មិនមានទេ", "មានខ្លះ", "មានច្រើន", "មានតិចតួច"], c: 0 },
+        { q: "តើអ្វីទៅជាអក្ខរកម្មឌីជីថល?", a: ["សមត្ថភាពប្រើប្រាស់បច្ចេកវិទ្យា", "ការចេះជួសជុលកុំព្យូទ័រ", "ការលេងហ្គេមច្រើន"], c: 0 },
+        { q: "តើសាលាបឋមសិក្សាកេសរារាមចូល គ.វ.អ នៅឆ្នាំណា?", a: ["ឆ្នាំ២០២៣", "ឆ្នាំ២០២៥", "ឆ្នាំ២០២៦", "ឆ្នាំ២០២៧"], c: 0 },
+        { q: "តើអ្វីទៅជាអក្ខរកម្មឌីជីថល?", a: ["សមត្ថភាពប្រើប្រាស់បច្ចេកវិទ្យា", "ការចេះជួសជុលកុំព្យូទ័រ", "ការលេងហ្គេមច្រើន"], c: 0 },
+        { q: "តើពាក្យសម្ងាត់បែបណាដែលសុវត្ថិភាពបំផុត?", a: ["123456", "ថ្ងៃខែឆ្នាំកំណើត", "ការប្រើអក្សរ លេខ និងនិមិត្តសញ្ញា"], c: 2 },
+        { q: "តើអ្វីទៅជា 'Phishing'?", a: ["ការស្ទូចត្រី", "ការបោកបញ្ឆោតតាមអ៊ីមែលដើម្បីលួចទិន្នន័យ", "ការទាញយកហ្គេម"], c: 1 },
+        { q: "តើបណ្តាញសង្គមមួយណាប្រើសម្រាប់ស្វែងរកការងារ?", a: ["TikTok", "LinkedIn", "Instagram"], c: 1 },
+        { q: "តើការប្រើប្រាស់អ៊ីនធឺណិតយូរពេកអាចប៉ះពាល់អ្វី?", a: ["សុខភាពភ្នែក និងផ្លូវចិត្ត", "ធ្វើឱ្យកុំព្យូទ័រដើរលឿន", "មិនមានបញ្ហាអ្វីទេ"], c: 0 },
+        { q: "តើ Cloud Storage ប្រើសម្រាប់ធ្វើអ្វី?", a: ["រក្សាទុកឯកសារលើអ៊ីនធឺណិត", "លាងម៉ាស៊ីន", "លេងហ្វេសប៊ុក"], c: 0 },
+        { q: "តើអ្វីទៅជាប្រភពព័ត៌មានដែលអាចទុកចិត្តបាន?", a: ["ព័ត៌មានដែលគ្មានប្រភពច្បាស់លាស់", "គេហទំព័រផ្លូវការរបស់ស្ថាប័នរដ្ឋ", "ព័ត៌មានដែលចែករំលែកតៗគ្នា"], c: 1 },
+        { q: "តើប៊ូតុង CC ក្នុង YouTube ប្រើសម្រាប់អ្វី?", a: ["ប្តូរវីដេអូ", "ដាក់អក្សររត់ក្រោម (Subtitle)", "ដំឡើងសំឡេង"], c: 1 },
+        { q: "តើអ៊ីមែល (Email) ជាអ្វី?", a: ["សារអេឡិចត្រូនិច", "រូបភាព", "វីដេអូខ្លី"], c: 0 },
+        { q: "តើសាលាបឋមសិក្សាកេសរារាមចូលគ.វ.អនៅឆ្នាំណា?", a: ["ឆ្នាំ២០២៣", "ឆ្នាំ២០២៥", "ឆ្នាំ២០២៦", "ឆ្នាំ២០២៦"], c: 0 },
+    ];
+
+    let currentIdx = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function renderQuestion() {
+        document.getElementById("q-number").innerText = `សំណួរទី ${currentIdx + 1}/${questions.length}`;
+        document.getElementById("q-text").innerText = questions[currentIdx].q;
+        
+        const list = document.getElementById("options-list");
+        list.innerHTML = "";
+        
+        questions[currentIdx].a.forEach((opt, i) => {
+            const row = document.createElement("div");
+            row.className = "option-row";
+
+            // ប៊ូតុងសម្លេងសម្រាប់ចម្លើយនីមួយៗ
+            const speakBtn = document.createElement("button");
+            speakBtn.className = "btn-speak-mini";
+            speakBtn.innerHTML = "🔊";
+            speakBtn.onclick = (e) => { e.stopPropagation(); speakText(opt); };
+
+            const btn = document.createElement("button");
+            btn.className = `option-item ${userAnswers[currentIdx] === i ? 'selected' : ''}`;
+            btn.innerHTML = `<span class="option-prefix">${prefixes[i]}</span> ${opt}`;
+            btn.onclick = () => { userAnswers[currentIdx] = i; renderQuestion(); };
+
+            row.appendChild(speakBtn);
+            row.appendChild(btn);
+            list.appendChild(row);
+        });
+    }
+
+    function goNext() { if (currentIdx < questions.length - 1) { currentIdx++; renderQuestion(); } }
+    function goPrev() { if (currentIdx > 0) { currentIdx--; renderQuestion(); } }
+
+    function finishQuiz() {
+        let score = 0;
+        userAnswers.forEach((ans, i) => { if (ans === questions[i].c) score++; });
+        document.getElementById("quiz-content").classList.add("hidden");
+        document.getElementById("result-screen").classList.remove("hidden");
+        document.getElementById("final-score").innerText = score;
+        document.getElementById("score-text").innerText = `អ្នកឆ្លើយត្រូវ ${score} លើ ១០ សំណួរ`;
+    }
+
+    function speakText(text) {
+        window.speechSynthesis.cancel(); // បញ្ឈប់សម្លេងដែលកំពុងនិយាយ
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = 'km-KH';
+        window.speechSynthesis.speak(msg);
+    }
+
+    renderQuestion();
+</script>
+
+</body>
+</html>
